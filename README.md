@@ -46,3 +46,7 @@
 ## 6. Programa de conteo de palabras:
 
     Pregunta: Reescriba el programa de conteo de palabras en C. Ejecute algunos archivos grandes en ambas versiones. ¿Es la versión C notablemente más rápida? ¿Fue mucho más difícil de depurar?
+<img width="976" height="70" alt="imagen" src="https://github.com/user-attachments/assets/298b32c7-d6dc-4670-8340-049cbf484868" />
+
+<img width="976" height="435" alt="imagen" src="https://github.com/user-attachments/assets/0bc48350-8257-4ed2-b5a8-5f58924206f6" />
+
