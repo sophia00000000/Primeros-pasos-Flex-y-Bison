@@ -68,8 +68,19 @@ Prueba con una archivo màs extenso
 
 Se evidencia que en un texto màs largo y con màs tipos de caracteres Flex resulta màs eficiente.
 
+---
+### Ejecutar
+Flex
+    $ flex fb1-1.l
+compilar - se produce del anterior - banderas
+    $ cc lex.yy.c -lfl
+ejecutable
+    $ ./a.out
 
-
+Flex y Bison 
+    bison -d calc.y      # genera calc.tab.c y calc.tab.h
+    flex calc.l          # genera lex.yy.c
+    cc calc.tab.c lex.yy.c -lfl -o calc
 
 ### Referencias 
 - https://github.com/westes/flex 
