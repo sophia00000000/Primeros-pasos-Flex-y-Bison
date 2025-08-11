@@ -24,6 +24,7 @@ Instrucciones:
 ## 3. Operadores de nivel de bits:
 
 Pregunta: Agregue operadores de nivel de bits como AND y OR a la calculadora.
+
 Instrucciones:
     • Considere cómo implementar el operador OR usando una barra vertical (|), que también se usa para el valor absoluto unario.
     • Discuta cómo puede diferenciar entre los dos usos del operador en expresiones como ‘factor exp ABS’.
@@ -34,30 +35,41 @@ Instrucciones:
 ## 4. Reconocimiento de tokens:
 
 Pregunta: ¿La versión manuscrita del escáner en el Ejemplo 1-4 reconoce exactamente los mismos tokens que la versión generada por flex?
+
 Ambas versiones aceptàn los mismos caraceres y los comnetarios se ignoran.
-Instrucciones: Compare las dos versiones del escáner. Identifique cualquier discrepancia en el reconocimiento de tokens y explique sus hallazgos.
 
 ## 5. Limitaciones de Flex:
 
 Pregunta: ¿Puedes pensar en idiomas para los que Flex no sería una buena herramienta para escribir un escáner?
-No serìa una buena herramiena para lenguajes como Python, Haskell, HTML, JS y C++ debidio al manejo de estructuras como la identaciòn, comentarios anidados, estructuras recursivas y los lenguajes mezcados o embebidos. 
 
+No serìa una buena herramiena para lenguajes como Python, Haskell, HTML, JS y C++ debidio al manejo de estructuras como la identaciòn, comentarios anidados, estructuras recursivas y los lenguajes mezcados o embebidos. 
 Una alternativa serìa integrar la lógica de indentación en una capa previa al parser)
-Instrucciones: Reflexiona sobre los tipos de idiomas y sus características. Proporcione ejemplos y justifique su razonamiento.
 
 ## 6. Programa de conteo de palabras:
 
 Pregunta: Reescriba el programa de conteo de palabras en C. Ejecute algunos archivos grandes en ambas versiones. ¿Es la versión C notablemente más rápida? ¿Fue mucho más difícil de depurar?
 
-<img width="976" height="70" alt="imagen" src="https://github.com/user-attachments/assets/298b32c7-d6dc-4670-8340-049cbf484868" />
+Prueba con el siguiente texto
+    In order to write a parser, we need some way to describe the rules the parser uses to
+    turn a sequence of tokens into a parse tree. The most common kind of language that
+    computer parsers handle is a context-free grammar (CFG).‡ The standard form to write
+    down a CFG is Backus-Naur Form (BNF)
 
-<img width="976" height="435" alt="imagen" src="https://github.com/user-attachments/assets/0bc48350-8257-4ed2-b5a8-5f58924206f6" />
+<img width="808" height="226" alt="imagen" src="https://github.com/user-attachments/assets/30a4c1d5-aaf1-4153-90b5-a7610882a62b" />
+
+<img width="823" height="213" alt="imagen" src="https://github.com/user-attachments/assets/19c58764-1b4f-4688-9d1d-17cab66919d5" />
+
+Resulta màs rapido C
+
+Prueba con una archivo màs extenso
+<img width="829" height="96" alt="imagen" src="https://github.com/user-attachments/assets/17fff0b4-87e5-4f72-8515-dd7a6d1abbc3" />
+
+<img width="829" height="96" alt="imagen" src="https://github.com/user-attachments/assets/4c6cfd40-ddbd-456b-b314-5cb6267ea3cc" />
+
+Se evidencia que en un texto màs largo y con màs tipos de caracteres Flex resulta màs eficiente.
 
 
 
 
 ### Referencias 
 - https://github.com/westes/flex 
-
-
-
