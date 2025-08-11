@@ -78,8 +78,12 @@ Flex
 
 
         
-compilar - se produce del anterior - bander
+compilar - se produce del anterior - band
+
+
         $ cc lex.yy.c -lfl
+
+
 ejecutable
 
 
