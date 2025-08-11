@@ -71,13 +71,24 @@ Se evidencia que en un texto màs largo y con màs tipos de caracteres Flex resu
 ---
 ### Ejecutar
 Flex
+
+
         $ flex fb1-1.l
-compilar - se produce del anterior - banderas
+
+
+
+        
+compilar - se produce del anterior - bander
         $ cc lex.yy.c -lfl
 ejecutable
+
+
+
         $ ./a.out
 
 Flex y Bison 
+
+
         bison -d calc.y      # genera calc.tab.c y calc.tab.h
         flex calc.l          # genera lex.yy.c
         cc calc.tab.c lex.yy.c -lfl -o calc
