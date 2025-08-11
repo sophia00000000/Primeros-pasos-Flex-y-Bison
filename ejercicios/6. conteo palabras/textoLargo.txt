@@ -1,0 +1,738 @@
+comments.
+Adding a Few More Rules | 15
+Download at Boykma.Com
+Flex and Bison vs. Handwritten Scanners and Parsers
+The two example programs in this chapter, word count and a calculator, are both simple
+enough that we could without too much trouble have written them directly in C. But
+there is little reason to do so when developing a program. The pattern-matching technique that flex uses is quite fast and is usually about the same speed as a handwritten
+scanner. For more complex scanners with many patterns, a flex scanner may even be
+faster, since handwritten code will usually do many comparisons per character, while
+flex always does one. The flex version of a scanner is invariably much shorter than the
+equivalent C, which makes it a lot easier to debug. In general, if the rules for breaking
+an input stream into tokens can be described by regular expressions, flex is the tool of
+choice.
+A Handwritten Scanner
+If the lexical syntax of a language isn’t too complicated, a handwritten scanner can be
+a reasonable alternative to a flex scanner. Here’s a handwritten C equivalent of the
+scanner in Example 1-6. This scanner will probably run a little faster than the flex
+version, but it’s a lot harder to modify to add or change token types. If you do plan to
+use a handwritten scanner, prototype it in flex first.
+/*
+ * Handwritten version of scanner for calculator
+ */
+# include <stdio.h>
+# include "fb1-5.tab.h"
+FILE *yyin;
+static int seeneof = 0;
+int
+yylex(void)
+{
+ if(!yyin) yyin = stdin;
+ if(seeneof) return 0; /* saw EOF last time */
+ while(1) {
+ int c = getc(yyin);
+ if(isdigit(c)) {
+ int i = c - '0';
+ while(isdigit(c = getc(yyin)))
+ i = (10*i) + c-'0';
+ yylval = i;
+ if(c == EOF) seeneof = 1;
+ else ungetc(c, yyin);
+ return NUMBER;
+ }
+ switch(c) {
+ case '+': return ADD; case '-': return SUB;
+16 | Chapter 1: Introducing Flex and Bison
+Download at Boykma.Com
+ case '*': return MUL; case '|': return ABS;
+ case '(': return OP; case ')': return CP;
+ case '\n': return EOL;
+ case ' ': case '\t': break; /* ignore these */
+ case EOF: return 0; /* standard end-of-file token */
+ case '/': c = getc(yyin);
+ if(c == '/') { /* it's a comment */
+ while((c = getc(yyin)) != '\n')
+ if(c == EOF) return 0; /* EOF in comment line */
+ break;
+ }
+ if(c == EOF) seeneof = 1; /* it's division */
+ else ungetc(c, yyin);
+ return DIV;
+ default: yyerror("Mystery character %c\n", c); break;
+ }
+ }
+}
+Similarly, a bison parser is much shorter and easier to debug than the equivalent handwritten parser, particularly because of bison’s verification that the grammar is unambiguous.
+Exercises
+1. Will the calculator accept a line that contains only a comment? Why not? Would
+it be easier to fix this in the scanner or in the parser?
+2. Make the calculator into a hex calculator that accepts both hex and decimal numbers. In the scanner add a pattern such as 0x[a-f0-9]+ to match a hex number, and
+in the action code use strtol to convert the string to a number that you store in
+yylval; then return a NUMBER token. Adjust the output printf to print the result in
+both decimal and hex.
+3. (extra credit) Add bit operators such as AND and OR to the calculator. The obvious
+operator to use for OR is a vertical bar, but that’s already the unary absolute value
+operator. What happens if you also use it as a binary OR operator, for example, exp
+ABS factor?
+4. Does the handwritten version of the scanner from Example 1-4 recognize exactly
+the same tokens as the flex version?
+5. Can you think of languages for which flex wouldn’t be a good tool to write a
+scanner?
+6. Rewrite the word count program in C. Run some large files through both versions.
+Is the C version noticeably faster? How much harder was it to debug?
+comments.
+Adding a Few More Rules | 15
+Download at Boykma.Com
+Flex and Bison vs. Handwritten Scanners and Parsers
+The two example programs in this chapter, word count and a calculator, are both simple
+enough that we could without too much trouble have written them directly in C. But
+there is little reason to do so when developing a program. The pattern-matching technique that flex uses is quite fast and is usually about the same speed as a handwritten
+scanner. For more complex scanners with many patterns, a flex scanner may even be
+faster, since handwritten code will usually do many comparisons per character, while
+flex always does one. The flex version of a scanner is invariably much shorter than the
+equivalent C, which makes it a lot easier to debug. In general, if the rules for breaking
+an input stream into tokens can be described by regular expressions, flex is the tool of
+choice.
+A Handwritten Scanner
+If the lexical syntax of a language isn’t too complicated, a handwritten scanner can be
+a reasonable alternative to a flex scanner. Here’s a handwritten C equivalent of the
+scanner in Example 1-6. This scanner will probably run a little faster than the flex
+version, but it’s a lot harder to modify to add or change token types. If you do plan to
+use a handwritten scanner, prototype it in flex first.
+/*
+ * Handwritten version of scanner for calculator
+ */
+# include <stdio.h>
+# include "fb1-5.tab.h"
+FILE *yyin;
+static int seeneof = 0;
+int
+yylex(void)
+{
+ if(!yyin) yyin = stdin;
+ if(seeneof) return 0; /* saw EOF last time */
+ while(1) {
+ int c = getc(yyin);
+ if(isdigit(c)) {
+ int i = c - '0';
+ while(isdigit(c = getc(yyin)))
+ i = (10*i) + c-'0';
+ yylval = i;
+ if(c == EOF) seeneof = 1;
+ else ungetc(c, yyin);
+ return NUMBER;
+ }
+ switch(c) {
+ case '+': return ADD; case '-': return SUB;
+16 | Chapter 1: Introducing Flex and Bison
+Download at Boykma.Com
+ case '*': return MUL; case '|': return ABS;
+ case '(': return OP; case ')': return CP;
+ case '\n': return EOL;
+ case ' ': case '\t': break; /* ignore these */
+ case EOF: return 0; /* standard end-of-file token */
+ case '/': c = getc(yyin);
+ if(c == '/') { /* it's a comment */
+ while((c = getc(yyin)) != '\n')
+ if(c == EOF) return 0; /* EOF in comment line */
+ break;
+ }
+ if(c == EOF) seeneof = 1; /* it's division */
+ else ungetc(c, yyin);
+ return DIV;
+ default: yyerror("Mystery character %c\n", c); break;
+ }
+ }
+}
+Similarly, a bison parser is much shorter and easier to debug than the equivalent handwritten parser, particularly because of bison’s verification that the grammar is unambiguous.
+Exercises
+1. Will the calculator accept a line that contains only a comment? Why not? Would
+it be easier to fix this in the scanner or in the parser?
+2. Make the calculator into a hex calculator that accepts both hex and decimal numbers. In the scanner add a pattern such as 0x[a-f0-9]+ to match a hex number, and
+in the action code use strtol to convert the string to a number that you store in
+yylval; then return a NUMBER token. Adjust the output printf to print the result in
+both decimal and hex.
+3. (extra credit) Add bit operators such as AND and OR to the calculator. The obvious
+operator to use for OR is a vertical bar, but that’s already the unary absolute value
+operator. What happens if you also use it as a binary OR operator, for example, exp
+ABS factor?
+4. Does the handwritten version of the scanner from Example 1-4 recognize exactly
+the same tokens as the flex version?
+5. Can you think of languages for which flex wouldn’t be a good tool to write a
+scanner?
+6. Rewrite the word count program in C. Run some large files through both versions.
+Is the C version noticeably faster? How much harder was it to debug?
+comments.
+Adding a Few More Rules | 15
+Download at Boykma.Com
+Flex and Bison vs. Handwritten Scanners and Parsers
+The two example programs in this chapter, word count and a calculator, are both simple
+enough that we could without too much trouble have written them directly in C. But
+there is little reason to do so when developing a program. The pattern-matching technique that flex uses is quite fast and is usually about the same speed as a handwritten
+scanner. For more complex scanners with many patterns, a flex scanner may even be
+faster, since handwritten code will usually do many comparisons per character, while
+flex always does one. The flex version of a scanner is invariably much shorter than the
+equivalent C, which makes it a lot easier to debug. In general, if the rules for breaking
+an input stream into tokens can be described by regular expressions, flex is the tool of
+choice.
+A Handwritten Scanner
+If the lexical syntax of a language isn’t too complicated, a handwritten scanner can be
+a reasonable alternative to a flex scanner. Here’s a handwritten C equivalent of the
+scanner in Example 1-6. This scanner will probably run a little faster than the flex
+version, but it’s a lot harder to modify to add or change token types. If you do plan to
+use a handwritten scanner, prototype it in flex first.
+/*
+ * Handwritten version of scanner for calculator
+ */
+# include <stdio.h>
+# include "fb1-5.tab.h"
+FILE *yyin;
+static int seeneof = 0;
+int
+yylex(void)
+{
+ if(!yyin) yyin = stdin;
+ if(seeneof) return 0; /* saw EOF last time */
+ while(1) {
+ int c = getc(yyin);
+ if(isdigit(c)) {
+ int i = c - '0';
+ while(isdigit(c = getc(yyin)))
+ i = (10*i) + c-'0';
+ yylval = i;
+ if(c == EOF) seeneof = 1;
+ else ungetc(c, yyin);
+ return NUMBER;
+ }
+ switch(c) {
+ case '+': return ADD; case '-': return SUB;
+16 | Chapter 1: Introducing Flex and Bison
+Download at Boykma.Com
+ case '*': return MUL; case '|': return ABS;
+ case '(': return OP; case ')': return CP;
+ case '\n': return EOL;
+ case ' ': case '\t': break; /* ignore these */
+ case EOF: return 0; /* standard end-of-file token */
+ case '/': c = getc(yyin);
+ if(c == '/') { /* it's a comment */
+ while((c = getc(yyin)) != '\n')
+ if(c == EOF) return 0; /* EOF in comment line */
+ break;
+ }
+ if(c == EOF) seeneof = 1; /* it's division */
+ else ungetc(c, yyin);
+ return DIV;
+ default: yyerror("Mystery character %c\n", c); break;
+ }
+ }
+}
+Similarly, a bison parser is much shorter and easier to debug than the equivalent handwritten parser, particularly because of bison’s verification that the grammar is unambiguous.
+Exercises
+1. Will the calculator accept a line that contains only a comment? Why not? Would
+it be easier to fix this in the scanner or in the parser?
+2. Make the calculator into a hex calculator that accepts both hex and decimal numbers. In the scanner add a pattern such as 0x[a-f0-9]+ to match a hex number, and
+in the action code use strtol to convert the string to a number that you store in
+yylval; then return a NUMBER token. Adjust the output printf to print the result in
+both decimal and hex.
+3. (extra credit) Add bit operators such as AND and OR to the calculator. The obvious
+operator to use for OR is a vertical bar, but that’s already the unary absolute value
+operator. What happens if you also use it as a binary OR operator, for example, exp
+ABS factor?
+4. Does the handwritten version of the scanner from Example 1-4 recognize exactly
+the same tokens as the flex version?
+5. Can you think of languages for which flex wouldn’t be a good tool to write a
+scanner?
+6. Rewrite the word count program in C. Run some large files through both versions.
+Is the C version noticeably faster? How much harder was it to debug?
+comments.
+Adding a Few More Rules | 15
+Download at Boykma.Com
+Flex and Bison vs. Handwritten Scanners and Parsers
+The two example programs in this chapter, word count and a calculator, are both simple
+enough that we could without too much trouble have written them directly in C. But
+there is little reason to do so when developing a program. The pattern-matching technique that flex uses is quite fast and is usually about the same speed as a handwritten
+scanner. For more complex scanners with many patterns, a flex scanner may even be
+faster, since handwritten code will usually do many comparisons per character, while
+flex always does one. The flex version of a scanner is invariably much shorter than the
+equivalent C, which makes it a lot easier to debug. In general, if the rules for breaking
+an input stream into tokens can be described by regular expressions, flex is the tool of
+choice.
+A Handwritten Scanner
+If the lexical syntax of a language isn’t too complicated, a handwritten scanner can be
+a reasonable alternative to a flex scanner. Here’s a handwritten C equivalent of the
+scanner in Example 1-6. This scanner will probably run a little faster than the flex
+version, but it’s a lot harder to modify to add or change token types. If you do plan to
+use a handwritten scanner, prototype it in flex first.
+/*
+ * Handwritten version of scanner for calculator
+ */
+# include <stdio.h>
+# include "fb1-5.tab.h"
+FILE *yyin;
+static int seeneof = 0;
+int
+yylex(void)
+{
+ if(!yyin) yyin = stdin;
+ if(seeneof) return 0; /* saw EOF last time */
+ while(1) {
+ int c = getc(yyin);
+ if(isdigit(c)) {
+ int i = c - '0';
+ while(isdigit(c = getc(yyin)))
+ i = (10*i) + c-'0';
+ yylval = i;
+ if(c == EOF) seeneof = 1;
+ else ungetc(c, yyin);
+ return NUMBER;
+ }
+ switch(c) {
+ case '+': return ADD; case '-': return SUB;
+16 | Chapter 1: Introducing Flex and Bison
+Download at Boykma.Com
+ case '*': return MUL; case '|': return ABS;
+ case '(': return OP; case ')': return CP;
+ case '\n': return EOL;
+ case ' ': case '\t': break; /* ignore these */
+ case EOF: return 0; /* standard end-of-file token */
+ case '/': c = getc(yyin);
+ if(c == '/') { /* it's a comment */
+ while((c = getc(yyin)) != '\n')
+ if(c == EOF) return 0; /* EOF in comment line */
+ break;
+ }
+ if(c == EOF) seeneof = 1; /* it's division */
+ else ungetc(c, yyin);
+ return DIV;
+ default: yyerror("Mystery character %c\n", c); break;
+ }
+ }
+}
+Similarly, a bison parser is much shorter and easier to debug than the equivalent handwritten parser, particularly because of bison’s verification that the grammar is unambiguous.
+Exercises
+1. Will the calculator accept a line that contains only a comment? Why not? Would
+it be easier to fix this in the scanner or in the parser?
+2. Make the calculator into a hex calculator that accepts both hex and decimal numbers. In the scanner add a pattern such as 0x[a-f0-9]+ to match a hex number, and
+in the action code use strtol to convert the string to a number that you store in
+yylval; then return a NUMBER token. Adjust the output printf to print the result in
+both decimal and hex.
+3. (extra credit) Add bit operators such as AND and OR to the calculator. The obvious
+operator to use for OR is a vertical bar, but that’s already the unary absolute value
+operator. What happens if you also use it as a binary OR operator, for example, exp
+ABS factor?
+4. Does the handwritten version of the scanner from Example 1-4 recognize exactly
+the same tokens as the flex version?
+5. Can you think of languages for which flex wouldn’t be a good tool to write a
+scanner?
+6. Rewrite the word count program in C. Run some large files through both versions.
+Is the C version noticeably faster? How much harder was it to debug?
+comments.
+Adding a Few More Rules | 15
+Download at Boykma.Com
+Flex and Bison vs. Handwritten Scanners and Parsers
+The two example programs in this chapter, word count and a calculator, are both simple
+enough that we could without too much trouble have written them directly in C. But
+there is little reason to do so when developing a program. The pattern-matching technique that flex uses is quite fast and is usually about the same speed as a handwritten
+scanner. For more complex scanners with many patterns, a flex scanner may even be
+faster, since handwritten code will usually do many comparisons per character, while
+flex always does one. The flex version of a scanner is invariably much shorter than the
+equivalent C, which makes it a lot easier to debug. In general, if the rules for breaking
+an input stream into tokens can be described by regular expressions, flex is the tool of
+choice.
+A Handwritten Scanner
+If the lexical syntax of a language isn’t too complicated, a handwritten scanner can be
+a reasonable alternative to a flex scanner. Here’s a handwritten C equivalent of the
+scanner in Example 1-6. This scanner will probably run a little faster than the flex
+version, but it’s a lot harder to modify to add or change token types. If you do plan to
+use a handwritten scanner, prototype it in flex first.
+/*
+ * Handwritten version of scanner for calculator
+ */
+# include <stdio.h>
+# include "fb1-5.tab.h"
+FILE *yyin;
+static int seeneof = 0;
+int
+yylex(void)
+{
+ if(!yyin) yyin = stdin;
+ if(seeneof) return 0; /* saw EOF last time */
+ while(1) {
+ int c = getc(yyin);
+ if(isdigit(c)) {
+ int i = c - '0';
+ while(isdigit(c = getc(yyin)))
+ i = (10*i) + c-'0';
+ yylval = i;
+ if(c == EOF) seeneof = 1;
+ else ungetc(c, yyin);
+ return NUMBER;
+ }
+ switch(c) {
+ case '+': return ADD; case '-': return SUB;
+16 | Chapter 1: Introducing Flex and Bison
+Download at Boykma.Com
+ case '*': return MUL; case '|': return ABS;
+ case '(': return OP; case ')': return CP;
+ case '\n': return EOL;
+ case ' ': case '\t': break; /* ignore these */
+ case EOF: return 0; /* standard end-of-file token */
+ case '/': c = getc(yyin);
+ if(c == '/') { /* it's a comment */
+ while((c = getc(yyin)) != '\n')
+ if(c == EOF) return 0; /* EOF in comment line */
+ break;
+ }
+ if(c == EOF) seeneof = 1; /* it's division */
+ else ungetc(c, yyin);
+ return DIV;
+ default: yyerror("Mystery character %c\n", c); break;
+ }
+ }
+}
+Similarly, a bison parser is much shorter and easier to debug than the equivalent handwritten parser, particularly because of bison’s verification that the grammar is unambiguous.
+Exercises
+1. Will the calculator accept a line that contains only a comment? Why not? Would
+it be easier to fix this in the scanner or in the parser?
+2. Make the calculator into a hex calculator that accepts both hex and decimal numbers. In the scanner add a pattern such as 0x[a-f0-9]+ to match a hex number, and
+in the action code use strtol to convert the string to a number that you store in
+yylval; then return a NUMBER token. Adjust the output printf to print the result in
+both decimal and hex.
+3. (extra credit) Add bit operators such as AND and OR to the calculator. The obvious
+operator to use for OR is a vertical bar, but that’s already the unary absolute value
+operator. What happens if you also use it as a binary OR operator, for example, exp
+ABS factor?
+4. Does the handwritten version of the scanner from Example 1-4 recognize exactly
+the same tokens as the flex version?
+5. Can you think of languages for which flex wouldn’t be a good tool to write a
+scanner?
+6. Rewrite the word count program in C. Run some large files through both versions.
+Is the C version noticeably faster? How much harder was it to debug?
+comments.
+Adding a Few More Rules | 15
+Download at Boykma.Com
+Flex and Bison vs. Handwritten Scanners and Parsers
+The two example programs in this chapter, word count and a calculator, are both simple
+enough that we could without too much trouble have written them directly in C. But
+there is little reason to do so when developing a program. The pattern-matching technique that flex uses is quite fast and is usually about the same speed as a handwritten
+scanner. For more complex scanners with many patterns, a flex scanner may even be
+faster, since handwritten code will usually do many comparisons per character, while
+flex always does one. The flex version of a scanner is invariably much shorter than the
+equivalent C, which makes it a lot easier to debug. In general, if the rules for breaking
+an input stream into tokens can be described by regular expressions, flex is the tool of
+choice.
+A Handwritten Scanner
+If the lexical syntax of a language isn’t too complicated, a handwritten scanner can be
+a reasonable alternative to a flex scanner. Here’s a handwritten C equivalent of the
+scanner in Example 1-6. This scanner will probably run a little faster than the flex
+version, but it’s a lot harder to modify to add or change token types. If you do plan to
+use a handwritten scanner, prototype it in flex first.
+/*
+ * Handwritten version of scanner for calculator
+ */
+# include <stdio.h>
+# include "fb1-5.tab.h"
+FILE *yyin;
+static int seeneof = 0;
+int
+yylex(void)
+{
+ if(!yyin) yyin = stdin;
+ if(seeneof) return 0; /* saw EOF last time */
+ while(1) {
+ int c = getc(yyin);
+ if(isdigit(c)) {
+ int i = c - '0';
+ while(isdigit(c = getc(yyin)))
+ i = (10*i) + c-'0';
+ yylval = i;
+ if(c == EOF) seeneof = 1;
+ else ungetc(c, yyin);
+ return NUMBER;
+ }
+ switch(c) {
+ case '+': return ADD; case '-': return SUB;
+16 | Chapter 1: Introducing Flex and Bison
+Download at Boykma.Com
+ case '*': return MUL; case '|': return ABS;
+ case '(': return OP; case ')': return CP;
+ case '\n': return EOL;
+ case ' ': case '\t': break; /* ignore these */
+ case EOF: return 0; /* standard end-of-file token */
+ case '/': c = getc(yyin);
+ if(c == '/') { /* it's a comment */
+ while((c = getc(yyin)) != '\n')
+ if(c == EOF) return 0; /* EOF in comment line */
+ break;
+ }
+ if(c == EOF) seeneof = 1; /* it's division */
+ else ungetc(c, yyin);
+ return DIV;
+ default: yyerror("Mystery character %c\n", c); break;
+ }
+ }
+}
+Similarly, a bison parser is much shorter and easier to debug than the equivalent handwritten parser, particularly because of bison’s verification that the grammar is unambiguous.
+Exercises
+1. Will the calculator accept a line that contains only a comment? Why not? Would
+it be easier to fix this in the scanner or in the parser?
+2. Make the calculator into a hex calculator that accepts both hex and decimal numbers. In the scanner add a pattern such as 0x[a-f0-9]+ to match a hex number, and
+in the action code use strtol to convert the string to a number that you store in
+yylval; then return a NUMBER token. Adjust the output printf to print the result in
+both decimal and hex.
+3. (extra credit) Add bit operators such as AND and OR to the calculator. The obvious
+operator to use for OR is a vertical bar, but that’s already the unary absolute value
+operator. What happens if you also use it as a binary OR operator, for example, exp
+ABS factor?
+4. Does the handwritten version of the scanner from Example 1-4 recognize exactly
+the same tokens as the flex version?
+5. Can you think of languages for which flex wouldn’t be a good tool to write a
+scanner?
+6. Rewrite the word count program in C. Run some large files through both versions.
+Is the C version noticeably faster? How much harder was it to debug?
+comments.
+Adding a Few More Rules | 15
+Download at Boykma.Com
+Flex and Bison vs. Handwritten Scanners and Parsers
+The two example programs in this chapter, word count and a calculator, are both simple
+enough that we could without too much trouble have written them directly in C. But
+there is little reason to do so when developing a program. The pattern-matching technique that flex uses is quite fast and is usually about the same speed as a handwritten
+scanner. For more complex scanners with many patterns, a flex scanner may even be
+faster, since handwritten code will usually do many comparisons per character, while
+flex always does one. The flex version of a scanner is invariably much shorter than the
+equivalent C, which makes it a lot easier to debug. In general, if the rules for breaking
+an input stream into tokens can be described by regular expressions, flex is the tool of
+choice.
+A Handwritten Scanner
+If the lexical syntax of a language isn’t too complicated, a handwritten scanner can be
+a reasonable alternative to a flex scanner. Here’s a handwritten C equivalent of the
+scanner in Example 1-6. This scanner will probably run a little faster than the flex
+version, but it’s a lot harder to modify to add or change token types. If you do plan to
+use a handwritten scanner, prototype it in flex first.
+/*
+ * Handwritten version of scanner for calculator
+ */
+# include <stdio.h>
+# include "fb1-5.tab.h"
+FILE *yyin;
+static int seeneof = 0;
+int
+yylex(void)
+{
+ if(!yyin) yyin = stdin;
+ if(seeneof) return 0; /* saw EOF last time */
+ while(1) {
+ int c = getc(yyin);
+ if(isdigit(c)) {
+ int i = c - '0';
+ while(isdigit(c = getc(yyin)))
+ i = (10*i) + c-'0';
+ yylval = i;
+ if(c == EOF) seeneof = 1;
+ else ungetc(c, yyin);
+ return NUMBER;
+ }
+ switch(c) {
+ case '+': return ADD; case '-': return SUB;
+16 | Chapter 1: Introducing Flex and Bison
+Download at Boykma.Com
+ case '*': return MUL; case '|': return ABS;
+ case '(': return OP; case ')': return CP;
+ case '\n': return EOL;
+ case ' ': case '\t': break; /* ignore these */
+ case EOF: return 0; /* standard end-of-file token */
+ case '/': c = getc(yyin);
+ if(c == '/') { /* it's a comment */
+ while((c = getc(yyin)) != '\n')
+ if(c == EOF) return 0; /* EOF in comment line */
+ break;
+ }
+ if(c == EOF) seeneof = 1; /* it's division */
+ else ungetc(c, yyin);
+ return DIV;
+ default: yyerror("Mystery character %c\n", c); break;
+ }
+ }
+}
+Similarly, a bison parser is much shorter and easier to debug than the equivalent handwritten parser, particularly because of bison’s verification that the grammar is unambiguous.
+Exercises
+1. Will the calculator accept a line that contains only a comment? Why not? Would
+it be easier to fix this in the scanner or in the parser?
+2. Make the calculator into a hex calculator that accepts both hex and decimal numbers. In the scanner add a pattern such as 0x[a-f0-9]+ to match a hex number, and
+in the action code use strtol to convert the string to a number that you store in
+yylval; then return a NUMBER token. Adjust the output printf to print the result in
+both decimal and hex.
+3. (extra credit) Add bit operators such as AND and OR to the calculator. The obvious
+operator to use for OR is a vertical bar, but that’s already the unary absolute value
+operator. What happens if you also use it as a binary OR operator, for example, exp
+ABS factor?
+4. Does the handwritten version of the scanner from Example 1-4 recognize exactly
+the same tokens as the flex version?
+5. Can you think of languages for which flex wouldn’t be a good tool to write a
+scanner?
+6. Rewrite the word count program in C. Run some large files through both versions.
+Is the C version noticeably faster? How much harder was it to debug?
+comments.
+Adding a Few More Rules | 15
+Download at Boykma.Com
+Flex and Bison vs. Handwritten Scanners and Parsers
+The two example programs in this chapter, word count and a calculator, are both simple
+enough that we could without too much trouble have written them directly in C. But
+there is little reason to do so when developing a program. The pattern-matching technique that flex uses is quite fast and is usually about the same speed as a handwritten
+scanner. For more complex scanners with many patterns, a flex scanner may even be
+faster, since handwritten code will usually do many comparisons per character, while
+flex always does one. The flex version of a scanner is invariably much shorter than the
+equivalent C, which makes it a lot easier to debug. In general, if the rules for breaking
+an input stream into tokens can be described by regular expressions, flex is the tool of
+choice.
+A Handwritten Scanner
+If the lexical syntax of a language isn’t too complicated, a handwritten scanner can be
+a reasonable alternative to a flex scanner. Here’s a handwritten C equivalent of the
+scanner in Example 1-6. This scanner will probably run a little faster than the flex
+version, but it’s a lot harder to modify to add or change token types. If you do plan to
+use a handwritten scanner, prototype it in flex first.
+/*
+ * Handwritten version of scanner for calculator
+ */
+# include <stdio.h>
+# include "fb1-5.tab.h"
+FILE *yyin;
+static int seeneof = 0;
+int
+yylex(void)
+{
+ if(!yyin) yyin = stdin;
+ if(seeneof) return 0; /* saw EOF last time */
+ while(1) {
+ int c = getc(yyin);
+ if(isdigit(c)) {
+ int i = c - '0';
+ while(isdigit(c = getc(yyin)))
+ i = (10*i) + c-'0';
+ yylval = i;
+ if(c == EOF) seeneof = 1;
+ else ungetc(c, yyin);
+ return NUMBER;
+ }
+ switch(c) {
+ case '+': return ADD; case '-': return SUB;
+16 | Chapter 1: Introducing Flex and Bison
+Download at Boykma.Com
+ case '*': return MUL; case '|': return ABS;
+ case '(': return OP; case ')': return CP;
+ case '\n': return EOL;
+ case ' ': case '\t': break; /* ignore these */
+ case EOF: return 0; /* standard end-of-file token */
+ case '/': c = getc(yyin);
+ if(c == '/') { /* it's a comment */
+ while((c = getc(yyin)) != '\n')
+ if(c == EOF) return 0; /* EOF in comment line */
+ break;
+ }
+ if(c == EOF) seeneof = 1; /* it's division */
+ else ungetc(c, yyin);
+ return DIV;
+ default: yyerror("Mystery character %c\n", c); break;
+ }
+ }
+}
+Similarly, a bison parser is much shorter and easier to debug than the equivalent handwritten parser, particularly because of bison’s verification that the grammar is unambiguous.
+Exercises
+1. Will the calculator accept a line that contains only a comment? Why not? Would
+it be easier to fix this in the scanner or in the parser?
+2. Make the calculator into a hex calculator that accepts both hex and decimal numbers. In the scanner add a pattern such as 0x[a-f0-9]+ to match a hex number, and
+in the action code use strtol to convert the string to a number that you store in
+yylval; then return a NUMBER token. Adjust the output printf to print the result in
+both decimal and hex.
+3. (extra credit) Add bit operators such as AND and OR to the calculator. The obvious
+operator to use for OR is a vertical bar, but that’s already the unary absolute value
+operator. What happens if you also use it as a binary OR operator, for example, exp
+ABS factor?
+4. Does the handwritten version of the scanner from Example 1-4 recognize exactly
+the same tokens as the flex version?
+5. Can you think of languages for which flex wouldn’t be a good tool to write a
+scanner?
+6. Rewrite the word count program in C. Run some large files through both versions.
+Is the C version noticeably faster? How much harder was it to debug?
+comments.
+Adding a Few More Rules | 15
+Download at Boykma.Com
+Flex and Bison vs. Handwritten Scanners and Parsers
+The two example programs in this chapter, word count and a calculator, are both simple
+enough that we could without too much trouble have written them directly in C. But
+there is little reason to do so when developing a program. The pattern-matching technique that flex uses is quite fast and is usually about the same speed as a handwritten
+scanner. For more complex scanners with many patterns, a flex scanner may even be
+faster, since handwritten code will usually do many comparisons per character, while
+flex always does one. The flex version of a scanner is invariably much shorter than the
+equivalent C, which makes it a lot easier to debug. In general, if the rules for breaking
+an input stream into tokens can be described by regular expressions, flex is the tool of
+choice.
+A Handwritten Scanner
+If the lexical syntax of a language isn’t too complicated, a handwritten scanner can be
+a reasonable alternative to a flex scanner. Here’s a handwritten C equivalent of the
+scanner in Example 1-6. This scanner will probably run a little faster than the flex
+version, but it’s a lot harder to modify to add or change token types. If you do plan to
+use a handwritten scanner, prototype it in flex first.
+/*
+ * Handwritten version of scanner for calculator
+ */
+# include <stdio.h>
+# include "fb1-5.tab.h"
+FILE *yyin;
+static int seeneof = 0;
+int
+yylex(void)
+{
+ if(!yyin) yyin = stdin;
+ if(seeneof) return 0; /* saw EOF last time */
+ while(1) {
+ int c = getc(yyin);
+ if(isdigit(c)) {
+ int i = c - '0';
+ while(isdigit(c = getc(yyin)))
+ i = (10*i) + c-'0';
+ yylval = i;
+ if(c == EOF) seeneof = 1;
+ else ungetc(c, yyin);
+ return NUMBER;
+ }
+ switch(c) {
+ case '+': return ADD; case '-': return SUB;
+16 | Chapter 1: Introducing Flex and Bison
+Download at Boykma.Com
+ case '*': return MUL; case '|': return ABS;
+ case '(': return OP; case ')': return CP;
+ case '\n': return EOL;
+ case ' ': case '\t': break; /* ignore these */
+ case EOF: return 0; /* standard end-of-file token */
+ case '/': c = getc(yyin);
+ if(c == '/') { /* it's a comment */
+ while((c = getc(yyin)) != '\n')
+ if(c == EOF) return 0; /* EOF in comment line */
+ break;
+ }
+ if(c == EOF) seeneof = 1; /* it's division */
+ else ungetc(c, yyin);
+ return DIV;
+ default: yyerror("Mystery character %c\n", c); break;
+ }
+ }
+}
+Similarly, a bison parser is much shorter and easier to debug than the equivalent handwritten parser, particularly because of bison’s verification that the grammar is unambiguous.
+Exercises
+1. Will the calculator accept a line that contains only a comment? Why not? Would
+it be easier to fix this in the scanner or in the parser?
+2. Make the calculator into a hex calculator that accepts both hex and decimal numbers. In the scanner add a pattern such as 0x[a-f0-9]+ to match a hex number, and
+in the action code use strtol to convert the string to a number that you store in
+yylval; then return a NUMBER token. Adjust the output printf to print the result in
+both decimal and hex.
+3. (extra credit) Add bit operators such as AND and OR to the calculator. The obvious
+operator to use for OR is a vertical bar, but that’s already the unary absolute value
+operator. What happens if you also use it as a binary OR operator, for example, exp
+ABS factor?
+4. Does the handwritten version of the scanner from Example 1-4 recognize exactly
+the same tokens as the flex version?
+5. Can you think of languages for which flex wouldn’t be a good tool to write a
+scanner?
+6. Rewrite the word count program in C. Run some large files through both versions.
+Is the C version noticeably faster? How much harder was it to debug?

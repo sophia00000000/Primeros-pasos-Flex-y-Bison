@@ -1,0 +1,4 @@
+In order to write a parser, we need some way to describe the rules the parser uses to
+turn a sequence of tokens into a parse tree. The most common kind of language that
+computer parsers handle is a context-free grammar (CFG).‡ The standard form to write
+down a CFG is Backus-Naur Form (BNF)
