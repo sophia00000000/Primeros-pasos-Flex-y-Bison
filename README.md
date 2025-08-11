@@ -2,17 +2,18 @@
 
 ## 1. Manejo de comentarios:
 
-    Pregunta: ¿La calculadora aceptará una línea que contenga solo un comentario? ¿Por qué o no? ¿Sería más fácil corregir esto en el escáner o analizador?
+Pregunta: ¿La calculadora aceptará una línea que contenga solo un comentario? ¿Por qué o no? ¿Sería más fácil corregir esto en el escáner o analizador?
+    Si puede aceptar comentarios pero lo ignora por completo y solo detecta "\n", que devuelve como EOL, al enviar un archivo con solo un comentario produce la salida esperada que es ">>"
     
 <img width="814" height="208" alt="imagen" src="https://github.com/user-attachments/assets/dc439a25-fc5b-4ecc-b092-34c044d45df4" />
-
-    Instrucciones: Reflexiona sobre el papel de los comentarios en tu código. Considere cómo el escáner y el analizador manejan los comentarios y proporcione una explicación detallada de su razonamiento.
-
+    
+Si se quiere manejar o procesar los comentarios sería mas fácil modificar el scanner e inventar una regla para COMMENT
+    
 ## 2. Conversión hexadecimal:
 
-    Pregunta: Convierta la calculadora en una calculadora hexadecimal que acepte números hexadecimales y decimales.
+Pregunta: Convierta la calculadora en una calculadora hexadecimal que acepte números hexadecimales y decimales.
 
-    Instrucciones:
+Instrucciones:
     • Agregue un patrón como 0x[a-f0-9]+ en el escáner para identificar números hexadecimales.
     • Use strtol en el código de acción para convertir la cadena en un número y almacenarlo en yylval.
     • Asegúrese de que la calculadora devuelva un token NUMBER.
@@ -22,9 +23,9 @@
 
 ## 3. Operadores de nivel de bits:
 
-    Pregunta: Agregue operadores de nivel de bits como AND y OR a la calculadora.
+Pregunta: Agregue operadores de nivel de bits como AND y OR a la calculadora.
 
-    Instrucciones:
+Instrucciones:
     • Considere cómo implementar el operador OR usando una barra vertical (|), que también se usa para el valor absoluto unario.
     • Discuta cómo puede diferenciar entre los dos usos del operador en expresiones como ‘factor exp ABS’.
 <img width="823" height="316" alt="imagen" src="https://github.com/user-attachments/assets/3049658b-7c58-48cd-a376-d9df7991e0a0" />
@@ -33,19 +34,19 @@
 
 ## 4. Reconocimiento de tokens:
 
-    Pregunta: ¿La versión manuscrita del escáner en el Ejemplo 1-4 reconoce exactamente los mismos tokens que la versión generada por flex?
-
-    Instrucciones: Compare las dos versiones del escáner. Identifique cualquier discrepancia en el reconocimiento de tokens y explique sus hallazgos.
+Pregunta: ¿La versión manuscrita del escáner en el Ejemplo 1-4 reconoce exactamente los mismos tokens que la versión generada por flex?
+Instrucciones: Compare las dos versiones del escáner. Identifique cualquier discrepancia en el reconocimiento de tokens y explique sus hallazgos.
 
 ## 5. Limitaciones de Flex:
 
-    Pregunta: ¿Puedes pensar en idiomas para los que Flex no sería una buena herramienta para escribir un escáner?
+Pregunta: ¿Puedes pensar en idiomas para los que Flex no sería una buena herramienta para escribir un escáner?
 
-    Instrucciones: Reflexiona sobre los tipos de idiomas y sus características. Proporcione ejemplos y justifique su razonamiento.
+Instrucciones: Reflexiona sobre los tipos de idiomas y sus características. Proporcione ejemplos y justifique su razonamiento.
 
 ## 6. Programa de conteo de palabras:
 
-    Pregunta: Reescriba el programa de conteo de palabras en C. Ejecute algunos archivos grandes en ambas versiones. ¿Es la versión C notablemente más rápida? ¿Fue mucho más difícil de depurar?
+Pregunta: Reescriba el programa de conteo de palabras en C. Ejecute algunos archivos grandes en ambas versiones. ¿Es la versión C notablemente más rápida? ¿Fue mucho más difícil de depurar?
+
 <img width="976" height="70" alt="imagen" src="https://github.com/user-attachments/assets/298b32c7-d6dc-4670-8340-049cbf484868" />
 
 <img width="976" height="435" alt="imagen" src="https://github.com/user-attachments/assets/0bc48350-8257-4ed2-b5a8-5f58924206f6" />
