@@ -71,16 +71,16 @@ Se evidencia que en un texto màs largo y con màs tipos de caracteres Flex resu
 ---
 ### Ejecutar
 Flex
-    $ flex fb1-1.l
+        $ flex fb1-1.l
 compilar - se produce del anterior - banderas
-    $ cc lex.yy.c -lfl
+        $ cc lex.yy.c -lfl
 ejecutable
-    $ ./a.out
+        $ ./a.out
 
 Flex y Bison 
-    bison -d calc.y      # genera calc.tab.c y calc.tab.h
-    flex calc.l          # genera lex.yy.c
-    cc calc.tab.c lex.yy.c -lfl -o calc
+        bison -d calc.y      # genera calc.tab.c y calc.tab.h
+        flex calc.l          # genera lex.yy.c
+        cc calc.tab.c lex.yy.c -lfl -o calc
 
 ### Referencias 
 - https://github.com/westes/flex 
