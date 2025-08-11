@@ -27,6 +27,9 @@
     Instrucciones:
     • Considere cómo implementar el operador OR usando una barra vertical (|), que también se usa para el valor absoluto unario.
     • Discuta cómo puede diferenciar entre los dos usos del operador en expresiones como ‘factor exp ABS’.
+<img width="823" height="316" alt="imagen" src="https://github.com/user-attachments/assets/3049658b-7c58-48cd-a376-d9df7991e0a0" />
+
+
 
 ## 4. Reconocimiento de tokens:
 
