@@ -49,12 +49,6 @@ Una alternativa serìa integrar la lógica de indentación en una capa previa al
 
 Pregunta: Reescriba el programa de conteo de palabras en C. Ejecute algunos archivos grandes en ambas versiones. ¿Es la versión C notablemente más rápida? ¿Fue mucho más difícil de depurar?
 
-Prueba con el siguiente texto
-    In order to write a parser, we need some way to describe the rules the parser uses to
-    turn a sequence of tokens into a parse tree. The most common kind of language that
-    computer parsers handle is a context-free grammar (CFG).‡ The standard form to write
-    down a CFG is Backus-Naur Form (BNF)
-
 <img width="808" height="226" alt="imagen" src="https://github.com/user-attachments/assets/30a4c1d5-aaf1-4153-90b5-a7610882a62b" />
 
 <img width="823" height="213" alt="imagen" src="https://github.com/user-attachments/assets/19c58764-1b4f-4688-9d1d-17cab66919d5" />
